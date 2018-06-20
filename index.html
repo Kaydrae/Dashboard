@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+     <link rel="stylesheet" href="css/main.css">
+     <link rel="stylesheet" href="css/switch.css">
+    
+</head>
+<body>
+    <header id="header">
+        
+        <div id="headerContent">
+            
+            <h3>Limit Switches</h3>
+            
+            <table>
+
+                <tr>
+                    <th>Switch One</th>
+                    <th>Switch Two</th> 
+                    <th>Swtich Three</th>
+                    <th>Switch Four</th>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div class="container">
+                            <label class="switch" for="switchOne">
+                            <input type="checkbox" id="switchOne" />
+                            <div class="slider round"></div>
+                            </label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="container">
+                            <label class="switch" for="switchTwo">
+                            <input type="checkbox" id="switchTwo" />
+                            <div class="slider round"></div>
+                            </label>
+                        </div>
+                    </td> 
+                    <td>
+                        <div class="container">
+                            <label class="switch" for="switchThree">
+                            <input type="checkbox" id="switchThree" />
+                            <div class="slider round"></div>
+                            </label>
+                        </div>
+                    </td>
+                    <th>
+                        <div class="container">
+                            <label class="switch" for="switchFour">
+                            <input type="checkbox" id="switchFour" />
+                            <div class="slider round"></div>
+                            </label>
+                        </div>
+                    </th>
+                </tr>
+
+            </table>
+
+        </div>
+       
+    </header>
+    <main id="main">
+        
+        <h3></h3>
+        <div id="mainContent">
+            <div id="div1" class="test">
+                <p>123</p>
+            </div>
+            <div id="div2" class="test">
+                <p>123</p>
+                <img src="front_wheels.png">
+            </div>
+            <div id="div3" class="test">
+                <p>123</p>
+            </div>
+        </div>
+    
+        <button id="Left">Left</button>
+        <button id="Middle">Middle</button>
+        <button id="Right">Right</button>
+    </main>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        
+        let leftAngel = -10;
+        let rightAngel = Math.abs(leftAngel) + 10;
+        
+        
+        $('#Left').click(function(){
+            
+            $('img').css({"transform": "rotate(" + leftAngel + "deg)", "transition": "1s ease all"});
+            
+        });
+        
+        $('#Middle').click(function(){
+            
+            $('img').css({"transform": "rotate(0deg)", "transition": "1s ease all"});
+            
+            
+        });
+        
+        $('#Right').click(function(){
+            
+            $('img').css({"transform": "rotate(" + rightAngel + "deg)", "transition": "1s ease all"});
+
+        });
+        
+    });
+    </script>
+</body>
+</html>
