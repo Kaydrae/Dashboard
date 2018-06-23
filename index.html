@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-     <link rel="stylesheet" href="css/main.css">
      <link rel="stylesheet" href="css/switch.css">
-    
+     <link rel="stylesheet" href="css/wheel.css">
+     <link rel="stylesheet" href="css/slider.css">
+     <link rel="stylesheet" href="css/leds.css">
+     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
     <header id="header">
         
-        <div id="headerContent">
-            
-            <h3>Limit Switches</h3>
-            
-            <table>
+        <div id="inputData">
+            <h3></h3>
+            <div id="switchesInput">
+              <table>
 
                 <tr>
                     <th>Switch One</th>
@@ -27,32 +28,32 @@
                 <tr>
                     <td>
                         <div class="container">
-                            <label class="switch" for="switchOne">
-                            <input type="checkbox" id="switchOne" />
+                            <label class="switch" for="SwitchOne">
+                            <input type="checkbox" class="inputSwitch" id="SwitchOne" />
                             <div class="slider round"></div>
                             </label>
                         </div>
                     </td>
                     <td>
                         <div class="container">
-                            <label class="switch" for="switchTwo">
-                            <input type="checkbox" id="switchTwo" />
+                            <label class="switch" for="SwitchTwo">
+                            <input type="checkbox" class="inputSwitch" id="SwitchTwo" />
                             <div class="slider round"></div>
                             </label>
                         </div>
                     </td> 
                     <td>
                         <div class="container">
-                            <label class="switch" for="switchThree">
-                            <input type="checkbox" id="switchThree" />
+                            <label class="switch" for="SwitchThree">
+                            <input type="checkbox" class="inputSwitch" id="SwitchThree" />
                             <div class="slider round"></div>
                             </label>
                         </div>
                     </td>
                     <th>
                         <div class="container">
-                            <label class="switch" for="switchFour">
-                            <input type="checkbox" id="switchFour" />
+                            <label class="switch" for="SwitchFour">
+                            <input type="checkbox" class="inputSwitch" id="SwitchFour" />
                             <div class="slider round"></div>
                             </label>
                         </div>
@@ -60,29 +61,74 @@
                 </tr>
 
             </table>
-
-        </div>
-       
+            </div>
+            
+            <div class="headerDiv" id="rotationInput">
+                
+                <div id="axisDegreeInput">
+                    <div id="axisValue" class="value">0</div>
+                    <input id="axisInput" type="range" min="-90" max="90" step="1" value="0">
+                </div>
+                <h3>Axis</h3>
+            </div>
+            
+            <div class="headerDiv" id="wheelInput">
+                
+                <div id="wheelSpeedInput">
+                    <div id="speedValue" class="value">0</div>
+                    <input id="speedInput" type="range" min="0" max="100" step="1" value="0">
+                </div>
+                <h3>Speed</h3>
+            </div>
+            
+        </div>    
+            
     </header>
     <main id="main">
-        
+        <h3>Limit Switches</h3>
+            <div id="headerContent">
+        </div>
+       
         <h3></h3>
         <div id="mainContent">
-            <div id="div1" class="test">
-                <p>123</p>
+            <div id="mainContentHeader">
+                <div id="limitSwitches">
+                    <div class="switchLED">
+                        <p>Switch One</p>
+                        <div id="SwitchOneLED"   class=" led-green"></div>
+                    </div>
+                    <div class="switchLED">
+                        <p>Switch Two</p>
+                        <div id="SwitchTwoLED"   class=" led-green"></div>
+                    </div>
+                    <div class="switchLED">
+                        <p>Switch Three</p>
+                        <div id="SwitchThreeLED" class=" led-green"></div>
+                    </div>
+                    <div class="switchLED">
+                        <p>Switch Four</p>
+                        <div id="SwitchFourLED"  class=" led-green"></div>
+                    </div>
+                </div>
             </div>
-            <div id="div2" class="test">
-                <p>123</p>
-                <img src="front_wheels.png">
-            </div>
-            <div id="div3" class="test">
-                <p>123</p>
+            <div id="mainContentBody">
+                
+                <div id="Wheel" class="Contentdiv">
+                    <p id="WheelSpeed">0 MPH</p>
+                    <span id="wheel"></span>
+                </div>
+                
+                <div id="Break" class="Contentdiv">
+                    <p id="breakState">Up/Down</p>
+                    <span id="break"></span>
+                </div>
+                
+                <div id="Axis" class="Contentdiv">
+                    <p id="DegreeAngel">0 &deg;</p>
+                    <span id="sopbot"></span>
+                </div>    
             </div>
         </div>
-    
-        <button id="Left">Left</button>
-        <button id="Middle">Middle</button>
-        <button id="Right">Right</button>
     </main>
     <script type="text/javascript">
     $(document).ready(function(){
@@ -90,24 +136,52 @@
         let leftAngel = -10;
         let rightAngel = Math.abs(leftAngel) + 10;
         
-        
-        $('#Left').click(function(){
+        $('.inputSwitch').change(function(){
+            const LED = $(this).attr('id');
+          
+            if($(this).is(':checked')){
+                
+                $('#' + LED + 'LED').addClass('led-green-blink');
+                
+            }else{
+                
+                $('#' + LED + 'LED').removeClass('led-green-blink');
+                
+            }
             
-            $('img').css({"transform": "rotate(" + leftAngel + "deg)", "transition": "1s ease all"});
+            
+        })
+        
+        $('#speedInput').on('input', function(){
+           
+            const speed = parseInt($(this).val());
+            let WheelSpeed = speed / 100;
+            //console.log(WheelSpeed);
+            $('#speedValue').text(speed);
+            $('#WheelSpeed').text(speed + ' MPH');
+            $('#wheel').css({
+                "animation-name": "rotate_wheel",
+                "animation-iteration-count": "infinite",
+                "animation-play-state": "running",
+                "animation-timing-function": "linear",
+                //"animation-duration": "0.02s"
+                "animation-duration": "" + WheelSpeed + "s"
+                
+            })
             
         });
         
-        $('#Middle').click(function(){
+        $('#axisInput').on('input', function(){
+           
+            const degree = parseInt($(this).val());
+            //console.log(degree);
+            $('#axisValue').text(degree);
+            $('#DegreeAngel').html(degree + '&deg;');
             
-            $('img').css({"transform": "rotate(0deg)", "transition": "1s ease all"});
+            $('#sopbot').css({
+                "transform": "rotate(" + degree + "deg)", 
+                "transition": "2s ease all"});
             
-            
-        });
-        
-        $('#Right').click(function(){
-            
-            $('img').css({"transform": "rotate(" + rightAngel + "deg)", "transition": "1s ease all"});
-
         });
         
     });

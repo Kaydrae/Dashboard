@@ -1,0 +1,142 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+
+html {
+  font:100%/1 "Montserrat";
+}
+html, body, figure { display:flex; }
+html, body {
+  justify-content:center;
+  color:gray;
+  height:100%;
+}
+body {
+  text-align:center;
+  counter-reset:count;
+  background:gainsboro;
+  width:80%;
+}
+figure {
+  flex:1;
+  flex-direction:column;
+  justify-content:center;
+  counter-increment:count;
+}
+figure:after {
+  font-size:2rem;
+  content:counter(count);
+  opacity:.5;
+}
+.toggle {
+  display:flex;
+  position:relative;
+  width:7.5rem;
+  height:2.5rem; 
+  background:white;
+  align-self:center;
+  -webkit-user-select:none;
+     -moz-user-select:none;
+      -ms-user-select:none;
+          user-select:none;
+  margin:2rem;
+}
+
+
+
+  .toggle:after, .toggle:before {
+  flex:1;
+  text-align:center;
+  line-height:2.5rem;
+}
+.toggle:after {
+  content:"ON";
+}
+.toggle:before {
+  content:"OFF";
+}
+
+input { display:none; }
+
+label {
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  -webkit-perspective:1000;
+          perspective:1000; 
+  cursor:pointer;
+}
+
+.card {
+  position:relative;
+  background:limegreen;
+  transition:.4s;
+  width:50%;
+  height:2.5rem;
+  pointer-events:none;
+}
+
+input:checked + label .card { background:tomato; }
+
+.flip {
+  -webkit-transform:perspective(200) rotateY(0);
+          transform:perspective(200) rotateY(0);  
+  -webkit-transform-origin:center right;  
+          transform-origin:center right;
+  -webkit-transform-style:preserve-3d;
+          transform-style:preserve-3d;
+}
+
+input:checked + label .flip {
+  -webkit-transform:perspective(200) rotateY(180deg);
+          transform:perspective(200) rotateY(180deg);
+}
+
+.grow {
+    -webkit-animation:grow-rev .4s 1 both;
+            animation:grow-rev .4s 1 both;
+}
+
+input:checked + label .grow {
+  -webkit-animation:grow .4s 1 both;
+          animation:grow .4s 1 both;
+}
+@-webkit-keyframes grow {
+  50%{ -webkit-transform:translateX(1.875rem) scale(2); transform:translateX(1.875rem) scale(2) }
+  to { -webkit-transform:translateX(3.75rem); transform:translateX(3.75rem); }
+}
+@keyframes grow {
+  50%{ -webkit-transform:translateX(1.875rem) scale(2); transform:translateX(1.875rem) scale(2) }
+  to { -webkit-transform:translateX(3.75rem); transform:translateX(3.75rem); }
+}
+
+@-webkit-keyframes grow-rev {
+  from { -webkit-transform:translateX(3.75rem); transform:translateX(3.75rem); }
+  50%{ -webkit-transform:translateX(1.875rem) scale(2); transform:translateX(1.875rem) scale(2) }
+  to { -webkit-transform:translateX(0rem); transform:translateX(0rem); }
+}
+
+@keyframes grow-rev {
+  from { -webkit-transform:translateX(3.75rem); transform:translateX(3.75rem); }
+  50%{ -webkit-transform:translateX(1.875rem) scale(2); transform:translateX(1.875rem) scale(2) }
+  to { -webkit-transform:translateX(0rem); transform:translateX(0rem); }
+}
+
+
+.slide .card { -webkit-transform:translate(0); transform:translate(0); }
+.slide input:checked + label .card {
+  -webkit-transform:translateX(3.75rem);
+          transform:translateX(3.75rem);
+}
+
+.slide2 { overflow:hidden; }
+.slide2 .card {
+  -webkit-transform:translate(0);
+          transform:translate(0);
+  background:transparent;
+  box-shadow:
+    -3.75rem 0 limegreen,
+    3.75rem 0 tomato;
+}
+.slide2 input:checked + label .card {
+  -webkit-transform:translateX(3.75rem);
+          transform:translateX(3.75rem);
+  background:transparent;
+}
