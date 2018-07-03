@@ -113,32 +113,105 @@
             </div>
             <div id="mainContentBody">
                 
-                <div id="Wheel" class="Contentdiv">
+                <div id="WheelContainer" class="ContentContainer">
                     <p id="WheelSpeed">0 MPH</p>
                     <span id="wheel"></span>
                 </div>
-                
-                <div id="Break" class="Contentdiv">
-                    <p id="breakState">Up/Down</p>
+                <div id="SpaceThree" class="ContentContainer Space">
+                    
+                </div>
+                <div id="BreakContainer" class="ContentContainer">
+                    <p id="breakState">Up</p>
                     <span id="break"></span>
                 </div>
+                <div id="SpaceTwo" class="ContentContainer Space">
                 
-                <div id="Axis" class="Contentdiv">
+                </div>
+                <div id="AxisContainer" class="ContentContainer">
                     <p id="DegreeAngel">0 &deg;</p>
                     <span id="sopbot"></span>
                 </div>    
+            </div>
+            <div id="mainContentFooter">
+                
+                <div id="FooterSpaceOne" class="ContentContainer"></div>
+                
+                <div id="FooterSpaceTwo" class="ContentContainer Space"></div>
+                
+                <div id="ground" class="ContentContainer"></div>
+                
+                <div id="FooterSpaceThree" class="ContentContainer Space"></div>
+                
+                <div id="FooterSpaceFour" class="ContentContainer"></div>
+                <div id="FooterSpaceFour" class="ContentContainer"></div> 
+                
             </div>
         </div>
     </main>
     <script type="text/javascript">
     $(document).ready(function(){
+        //For this dashboard Break up is switch two and Break down and switch three
+        //All The way left is Switch One and All the way right is switch four
         
-        let leftAngel = -10;
-        let rightAngel = Math.abs(leftAngel) + 10;
+        //All Vars coming from Pie
+        
+        const PotMid = 0;
+        const PotMax = 0;
+        const PitMin = 0;
+        const SwitchOne = 0;
+        const SwitchTwo = 0;
+        const SwitchThree = 0;
+        const SwitchFour = 0;
+        
+        
+        
+        //Set All Values before change
+        
+        //Setting Break
+        if($('#breakState').text() === 'Up'){
+            
+            MoveBreakUp();
+            $('#SwitchTwo').prop('checked', true);
+            $('#SwitchThree').prop('checked', false);
+            $('#SwitchTwoLED').addClass('led-green-blink');
+            $('#SwitchThreeLED').removeClass('led-green-blink');
+            
+        }else if($('#breakState').text() === 'Down'){
+            
+            MoveBreakDown();
+            $('#SwitchThree').prop('checked', true);
+            $('#SwitchTwo').prop('checked', false);
+            $('#SwitchThreeLED').addClass('led-green-blink');
+            $('#SwitchTwoLED').removeClass('led-green-blink');
+        }
+        
+        //Setting Axis
+        if($('#speedInput').val() === -90){
+           
+            $('#SwitchOne').prop('checked', true);
+            $('#SwitchFour').prop('checked', false);
+            $('#SwitchOneLED').addClass('led-green-blink');
+            $('#SwitchFourLED').removeClass('led-green-blink');
+        
+            
+           }else if($('#speedInput').val() === 90){
+               
+           $('#SwitchFour').prop('checked', true);
+            $('#SwitchOne').prop('checked', false);
+            $('#SwitchFourLED').addClass('led-green-blink');
+            $('#SwitchOneLED').removeClass('led-green-blink');
+            
+        }
+        
+        
+        
+        
+        
         
         $('.inputSwitch').change(function(){
             const LED = $(this).attr('id');
-          
+            const SwitchID = $(this).attr('id');
+            
             if($(this).is(':checked')){
                 
                 $('#' + LED + 'LED').addClass('led-green-blink');
@@ -149,14 +222,29 @@
                 
             }
             
-            
-        })
+            switch(SwitchID){
+                    
+                case 'SwitchOne':
+                    SetAxisLeft()
+                    break;
+                case 'SwitchTwo':
+                    MoveBreakUp();
+                    break;
+                case 'SwitchThree':
+                    MoveBreakDown();
+                    break;
+                case 'SwitchFour':
+                    SexAxisRight();
+                    break;
+            }
+              
+        });
         
         $('#speedInput').on('input', function(){
            
             const speed = parseInt($(this).val());
             let WheelSpeed = speed / 100;
-            //console.log(WheelSpeed);
+            
             $('#speedValue').text(speed);
             $('#WheelSpeed').text(speed + ' MPH');
             $('#wheel').css({
@@ -164,7 +252,6 @@
                 "animation-iteration-count": "infinite",
                 "animation-play-state": "running",
                 "animation-timing-function": "linear",
-                //"animation-duration": "0.02s"
                 "animation-duration": "" + WheelSpeed + "s"
                 
             })
@@ -184,7 +271,57 @@
             
         });
         
+        
     });
+        
+    function MoveBreakUp(){
+        $('#SwitchThree').prop('checked', false);
+        $('#SwitchThreeLED').removeClass('led-green-blink');
+        $('#breakState').text('Up');
+        $('#break').css({
+                "transform": "none", 
+                "transition": "2s ease all"});
+        
+    }   
+        
+    function MoveBreakDown(){
+        
+        $('#SwitchTwo').prop('checked', false);
+        $('#SwitchTwoLED').removeClass('led-green-blink');
+        $('#breakState').text('Down');
+        $('#break').css({
+                "transform": "translateY(50px)", 
+                "transition": "2s ease all"});
+        
+    }   
+        
+    function SetAxisLeft(){
+        
+        $('#SwitchOne').prop('checked', true);
+        $('#SwitchFour').prop('checked', false);
+        $('#SwitchOneLED').addClass('led-green-blink');
+        $('#SwitchFourLED').removeClass('led-green-blink');
+        $('#axisInput').val(-90);
+        $('#axisValue').text(-90);
+        $('#DegreeAngel').html(-90 + '&deg;');
+        $('#sopbot').css({
+                "transform": "rotate(" + -90 + "deg)", 
+                "transition": "2s ease all"});
+            
+    }
+        
+    function SexAxisRight(){
+         $('#SwitchFour').prop('checked', true);
+        $('#SwitchOne').prop('checked', false);
+        $('#SwitchFourLED').addClass('led-green-blink');
+        $('#SwitchOneLED').removeClass('led-green-blink');
+        $('#axisInput').val(90);
+        $('#axisValue').text(90);
+        $('#DegreeAngel').html(90 + '&deg;');
+        $('#sopbot').css({
+                "transform": "rotate(" + 90 + "deg)", 
+                "transition": "2s ease all"});
+    }    
     </script>
 </body>
 </html>
