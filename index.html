@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/socket.io.js"></script>
      <link rel="stylesheet" href="css/switch.css">
      <link rel="stylesheet" href="css/wheel.css">
      <link rel="stylesheet" href="css/slider.css">
@@ -153,16 +154,32 @@
         //For this dashboard Break up is switch two and Break down and switch three
         //All The way left is Switch One and All the way right is switch four
         
+        const socket = io();
+        
+        //Document IDs
+        
+        
+        const Testing = true;
+        
         //All Vars coming from Pie
         
-        const PotMid = 0;
-        const PotMax = 0;
-        const PitMin = 0;
-        const SwitchOne = 0;
-        const SwitchTwo = 0;
-        const SwitchThree = 0;
-        const SwitchFour = 0;
+        const steerMotorSpeed = 0;
+        const releasingBreak = 0;
+        const applyingBreak = 0;
+        const leftHallValue = 0;
+        const rightHallValue = 0;
+        const leftHallCount = 0;
+        const rightHallCount = 0;
+        const leftSteerLimitSwitch = 0;
+        const rightSteerLimitSwitch = 0;
+        const breakReleasedLimitSwitch = 0;
+        const breakApplyLimitSwitch = 0;
+        const potentioneter = 0; 
+        const inAuto = 0;
         
+        if(!Testing){
+            $('#header').hide();
+        }
         
         
         //Set All Values before change
