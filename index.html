@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
      <link rel="stylesheet" href="css/switch.css">
      <link rel="stylesheet" href="css/wheel.css">
      <link rel="stylesheet" href="css/slider.css">
@@ -22,7 +22,7 @@
                 <tr>
                     <th>Switch One</th>
                     <th>Switch Two</th> 
-                    <th>Swtich Three</th>
+                    <th>Switch Three</th>
                     <th>Switch Four</th>
                 </tr>
                 
@@ -68,7 +68,7 @@
                 
                 <div id="axisDegreeInput">
                     <div id="axisValue" class="value">0</div>
-                    <input id="axisInput" type="range" min="-90" max="90" step="1" value="0">
+                    <input id="axisInput" type="range" min="-270" max="270" step="1" value="0">
                 </div>
                 <h3>Axis</h3>
             </div>
@@ -86,9 +86,27 @@
             
     </header>
     <main id="main">
+        <div id="TestingArea">
+            <div class="container">
+                <p>Testing</p>
+                <label class="switch" for="testing">
+                    <input type="checkbox" class="inputSwitch" id="testing" />
+                    <div class="slider round"></div>
+                </label>
+            </div>
+        </div>
+        <div id="autoArea">
+            <div class="container">
+                <p>Auto</p>
+                <label class="switch" for="inAuto">
+                    <input type="checkbox" class="inputSwitch" id="inAuto" />
+                    <div class="slider round"></div>
+                </label>
+            </div>
+        </div>
         <h3>Limit Switches</h3>
             <div id="headerContent">
-        </div>
+            </div>
        
         <h3></h3>
         <div id="mainContent">
@@ -117,6 +135,7 @@
                 <div id="WheelContainer" class="ContentContainer">
                     <p id="WheelSpeed">0 MPH</p>
                     <span id="wheel"></span>
+                    <p id="WheelCount">0</p>
                 </div>
                 <div id="SpaceThree" class="ContentContainer Space">
                     
@@ -144,171 +163,340 @@
                 <div id="FooterSpaceThree" class="ContentContainer Space"></div>
                 
                 <div id="FooterSpaceFour" class="ContentContainer"></div>
-                <div id="FooterSpaceFour" class="ContentContainer"></div> 
+                <div id="FooterSpaceFive" class="ContentContainer"></div>
                 
             </div>
         </div>
     </main>
     <script type="text/javascript">
     $(document).ready(function(){
-        //For this dashboard Break up is switch two and Break down and switch three
-        //All The way left is Switch One and All the way right is switch four
-        
-        const socket = io();
-        
-        //Document IDs
-        
-        
-        const Testing = true;
-        
-        //All Vars coming from Pie
-        
-        const steerMotorSpeed = 0;
-        const releasingBreak = 0;
-        const applyingBreak = 0;
-        const leftHallValue = 0;
-        const rightHallValue = 0;
-        const leftHallCount = 0;
-        const rightHallCount = 0;
-        const leftSteerLimitSwitch = 0;
-        const rightSteerLimitSwitch = 0;
-        const breakReleasedLimitSwitch = 0;
-        const breakApplyLimitSwitch = 0;
-        const potentioneter = 0; 
-        const inAuto = 0;
-        
-        if(!Testing){
-            $('#header').hide();
-        }
-        
-        
-        //Set All Values before change
-        
-        //Setting Break
-        if($('#breakState').text() === 'Up'){
-            
-            MoveBreakUp();
-            $('#SwitchTwo').prop('checked', true);
-            $('#SwitchThree').prop('checked', false);
-            $('#SwitchTwoLED').addClass('led-green-blink');
-            $('#SwitchThreeLED').removeClass('led-green-blink');
-            
-        }else if($('#breakState').text() === 'Down'){
-            
-            MoveBreakDown();
-            $('#SwitchThree').prop('checked', true);
-            $('#SwitchTwo').prop('checked', false);
-            $('#SwitchThreeLED').addClass('led-green-blink');
-            $('#SwitchTwoLED').removeClass('led-green-blink');
-        }
-        
-        //Setting Axis
-        if($('#speedInput').val() === -90){
-           
-            $('#SwitchOne').prop('checked', true);
-            $('#SwitchFour').prop('checked', false);
-            $('#SwitchOneLED').addClass('led-green-blink');
-            $('#SwitchFourLED').removeClass('led-green-blink');
-        
-            
-           }else if($('#speedInput').val() === 90){
-               
-           $('#SwitchFour').prop('checked', true);
-            $('#SwitchOne').prop('checked', false);
-            $('#SwitchFourLED').addClass('led-green-blink');
-            $('#SwitchOneLED').removeClass('led-green-blink');
-            
-        }
-        
-        
-        
-        
-        
-        
-        $('.inputSwitch').change(function(){
-            const LED = $(this).attr('id');
-            const SwitchID = $(this).attr('id');
-            
-            if($(this).is(':checked')){
-                
-                $('#' + LED + 'LED').addClass('led-green-blink');
-                
-            }else{
-                
-                $('#' + LED + 'LED').removeClass('led-green-blink');
-                
-            }
-            
-            switch(SwitchID){
-                    
-                case 'SwitchOne':
-                    SetAxisLeft()
-                    break;
-                case 'SwitchTwo':
+
+
+            //For this dashboard Break up is switch two and Break down and switch three
+            //All The way left is Switch One and All the way right is switch four
+            const socket = io();
+
+            let Testing = true;
+
+            //Element Vars
+            let steerMotorSpeed = 0;
+            let releasingBreak = 0;
+            let applyingBreak = 0;
+            let leftHallValue = 0;
+            let rightHallValue = 0;
+            let leftHallCount = 0;
+            let rightHallCount = 0;
+            let leftSteerLimitSwitch = 0;
+            let rightSteerLimitSwitch = 0;
+            let breakReleasedLimitSwitch = 0;
+            let breakApplyLimitSwitch = 0;
+            let potentiometer = 0;
+            let inAuto = 0;
+
+
+            $('#testing').change(function () {
+
+                if ($(this).is(':Checked')) {
+                    $('#header').hide();
+                    socket.emit('Testing', 'pi');
+                    Testing = false;
+                } else {
+                    $('#header').show();
+                    socket.emit('Testing', 'close');
+                    Testing = true;
+                }
+
+
+                //Get Vars
+                if (!Testing) {
+                    window.setInterval(function () {
+                        console.log('Request Sent');
+
+                            socket.on('steerMotorSpeed', function (value) {//
+                                steerMotorSpeed = value;
+                                console.log('steerMotorSpeed: ' + value);
+
+                            });
+                            socket.on('releasingBrake', function (value) {//
+                                releasingBreak = value;
+                                console.log('releasingBrake: ' + value);
+
+                            });
+                            socket.on('applyingBrake', function (value) {//
+                                applyingBreak = value;
+                                console.log('applyingBrake: ' + value);
+
+                            });
+                            socket.on('leftHallValue', function (value) {//
+                                leftHallValue = value;
+                                console.log('leftHallValue: ' + value);
+
+                            });
+                            socket.on('rightHallValue', function (value) {//
+                                rightHallValue = value;
+                                console.log('rightHallValue: ' + value);
+
+                            });
+                            socket.on('leftHallCount', function (value) {//
+                                leftHallCount = value;
+                                console.log('leftHallCount: ' + value);
+
+                            });
+                            socket.on('rightHallCount', function (value) {//
+                                rightHallCount = value;
+                                console.log('rightHallCount: ' + value);
+
+                            });
+                            socket.on('leftSteerLimitSwitch', function (value) {//
+                                leftSteerLimitSwitch = value;
+                                console.log('leftSteerLimitSwitch: ' + value);
+
+                            });
+                            socket.on('rightSteerLimitSwitch', function (value) {//
+                                rightSteerLimitSwitch = value;
+                                console.log('rightSteerLimitSwitch: ' + value);
+
+                            });
+                            socket.on('brakeReleaseLimitSwitch', function (value) {//
+                                breakReleasedLimitSwitch = value;
+                                console.log('brakeReleaseLimitSwitch: ' + value);
+
+                            });
+                            socket.on('brakeApplyLimitSwitch', function (value) {//
+                                breakApplyLimitSwitch = value;
+                                console.log('brakeApplyLimitSwitch: ' + value);
+
+                            });
+
+                            socket.on('potentiometer', function (value) {//
+                                potentiometer = value;
+                                console.log('potentiometer: ' + value);
+
+                            });
+                            socket.on('inAutonomous', function (value) {//
+                                inAuto = value;
+                                console.log('inAutonomous: ' + value);
+
+                            });
+
+                    }, 2000);
+                }
+
+                //Set Elements to vars
+
+                /**
+                 * Setting Switches
+                 */
+                    //Setting break
+                    if(breakReleasedLimitSwitch === 1){
+                        //Going Up
+                        let releasedSpeed = releasingBreak / 100;
+                        MoveBreakUp(releasedSpeed);
+                    }else if(breakApplyLimitSwitch === 1){
+                        //Going Down
+                        let applySpeed = applyingBreak / 100;
+                        MoveBreakDown(applySpeed);
+                    }
+
+                    //Setting Steer
+                    if(leftSteerLimitSwitch === 1){
+                        //Left
+                        $('#SwitchOne').prop('checked', true);
+                        $('#SwitchFour').prop('checked', false);
+                    }else if(rightSteerLimitSwitch === 1){
+                        //Right
+                        $('#SwitchFour').prop('checked', true);
+                        $('#SwitchOne').prop('checked', false);
+                    }
+
+                    if(inAuto === 1){
+                        $('#inAuto').prop('checked', true);
+                    }else{
+                        $('#inAuto').prop('checked', false);
+                    }
+                /**
+                 * Setting Switches End
+                 */
+
+
+                /**
+                 * Setting Wheel Speed
+                 */
+                    let avgSpeed;
+                    let WheelSpeed;
+
+                    avgSpeed = (leftHallValue + rightHallValue) / 2;
+
+                    WheelSpeed = avgSpeed / 100;
+
+                    $('#speedValue').text(avgSpeed);
+                    $('#WheelSpeed').text(avgSpeed + ' MPH');
+                    $('#wheel').css({
+                        "animation-name": "rotate_wheel",
+                        "animation-iteration-count": "infinite",
+                        "animation-play-state": "running",
+                        "animation-timing-function": "linear",
+                        "animation-duration": "" + WheelSpeed + "s"
+                    });
+                /**
+                 * Setting Wheel Speed End
+                 */
+
+
+                /**
+                 * Setting Steer Speed
+                 */
+                    let degree = potentiometer;
+                    let axisSpeed = steerMotorSpeed / 100;
+
+                    $('#axisValue').text(degree);
+                    $('#DegreeAngel').html(degree + '&deg;');
+
+                    $('#sopbot').css({
+                        "transform": "rotate(" + degree + "deg)",
+                        "transition": "" + axisSpeed + "s ease all"
+                    });
+                /**
+                 * Setting Steer Speed End
+                 */
+
+                /**
+                 * Setting Average Count
+                 */
+                    let avgCount = (leftHallCount + rightHallCount) / 2;
+                    $('#WheelCount').text(avgCount);
+                /**
+                 * Setting Average Count End
+                 */
+            });
+
+            if(Testing){
+
+                //Set All Values before change
+
+                //Setting Break
+                if ($('#breakState').text() === 'Up') {
+
                     MoveBreakUp();
-                    break;
-                case 'SwitchThree':
+                    $('#SwitchTwo').prop('checked', true);
+                    $('#SwitchThree').prop('checked', false);
+                    $('#SwitchTwoLED').addClass('led-green-blink');
+                    $('#SwitchThreeLED').removeClass('led-green-blink');
+
+                } else if ($('#breakState').text() === 'Down') {
+
                     MoveBreakDown();
-                    break;
-                case 'SwitchFour':
-                    SexAxisRight();
-                    break;
+                    $('#SwitchThree').prop('checked', true);
+                    $('#SwitchTwo').prop('checked', false);
+                    $('#SwitchThreeLED').addClass('led-green-blink');
+                    $('#SwitchTwoLED').removeClass('led-green-blink');
+                }
+
+                //Setting Axis
+                if ($('#speedInput').val() === -90) {
+
+                    $('#SwitchOne').prop('checked', true);
+                    $('#SwitchFour').prop('checked', false);
+                    $('#SwitchOneLED').addClass('led-green-blink');
+                    $('#SwitchFourLED').removeClass('led-green-blink');
+
+
+                } else if ($('#speedInput').val() === 90) {
+
+                    $('#SwitchFour').prop('checked', true);
+                    $('#SwitchOne').prop('checked', false);
+                    $('#SwitchFourLED').addClass('led-green-blink');
+                    $('#SwitchOneLED').removeClass('led-green-blink');
+
+                }
+
+
+                $('.inputSwitch').change(function () {
+                    const LED = $(this).attr('id');
+                    const SwitchID = $(this).attr('id');
+
+                    if ($(this).is(':checked')) {
+
+                        $('#' + LED + 'LED').addClass('led-green-blink');
+
+                    } else {
+
+                        $('#' + LED + 'LED').removeClass('led-green-blink');
+
+                    }
+
+                    switch (SwitchID) {
+
+                        case 'SwitchOne':
+                            SetAxisLeft();
+                            break;
+                        case 'SwitchTwo':
+                            MoveBreakUp(2);
+                            break;
+                        case 'SwitchThree':
+                            MoveBreakDown(2);
+                            break;
+                        case 'SwitchFour':
+                            SexAxisRight();
+                            break;
+                    }
+
+                });
+
+                $('#speedInput').on('input', function () {
+
+                    const speed = parseInt($(this).val());
+                    let WheelSpeed = speed / 100;
+
+                    $('#speedValue').text(speed);
+                    $('#WheelSpeed').text(speed + ' MPH');
+                    $('#wheel').css({
+                        "animation-name": "rotate_wheel",
+                        "animation-iteration-count": "infinite",
+                        "animation-play-state": "running",
+                        "animation-timing-function": "linear",
+                        "animation-duration": "" + WheelSpeed + "s"
+
+                    });
+
+                });
+
+                $('#axisInput').on('input', function () {
+
+                    const degree = parseInt($(this).val());
+                    //console.log(degree);
+                    $('#axisValue').text(degree);
+                    $('#DegreeAngel').html(degree + '&deg;');
+
+                    $('#sopbot').css({
+                        "transform": "rotate(" + degree + "deg)",
+                        "transition": "2s ease all"
+                    });
+
+                });
+
             }
-              
-        });
-        
-        $('#speedInput').on('input', function(){
-           
-            const speed = parseInt($(this).val());
-            let WheelSpeed = speed / 100;
-            
-            $('#speedValue').text(speed);
-            $('#WheelSpeed').text(speed + ' MPH');
-            $('#wheel').css({
-                "animation-name": "rotate_wheel",
-                "animation-iteration-count": "infinite",
-                "animation-play-state": "running",
-                "animation-timing-function": "linear",
-                "animation-duration": "" + WheelSpeed + "s"
-                
-            })
-            
-        });
-        
-        $('#axisInput').on('input', function(){
-           
-            const degree = parseInt($(this).val());
-            //console.log(degree);
-            $('#axisValue').text(degree);
-            $('#DegreeAngel').html(degree + '&deg;');
-            
-            $('#sopbot').css({
-                "transform": "rotate(" + degree + "deg)", 
-                "transition": "2s ease all"});
-            
-        });
-        
-        
+
     });
         
-    function MoveBreakUp(){
+    function MoveBreakUp(Speed){
         $('#SwitchThree').prop('checked', false);
         $('#SwitchThreeLED').removeClass('led-green-blink');
         $('#breakState').text('Up');
         $('#break').css({
                 "transform": "none", 
-                "transition": "2s ease all"});
+                "transition": ""+ Speed + "s ease all"});
         
     }   
         
-    function MoveBreakDown(){
+    function MoveBreakDown(Speed){
         
         $('#SwitchTwo').prop('checked', false);
         $('#SwitchTwoLED').removeClass('led-green-blink');
         $('#breakState').text('Down');
         $('#break').css({
                 "transform": "translateY(50px)", 
-                "transition": "2s ease all"});
+                "transition": ""+ Speed +"s ease all"});
         
     }   
         
@@ -318,25 +506,25 @@
         $('#SwitchFour').prop('checked', false);
         $('#SwitchOneLED').addClass('led-green-blink');
         $('#SwitchFourLED').removeClass('led-green-blink');
-        $('#axisInput').val(-90);
-        $('#axisValue').text(-90);
-        $('#DegreeAngel').html(-90 + '&deg;');
+        $('#axisInput').val(-270);
+        $('#axisValue').text(-270);
+        $('#DegreeAngel').html(-270 + '&deg;');
         $('#sopbot').css({
-                "transform": "rotate(" + -90 + "deg)", 
+                "transform": "rotate(" + -270 + "deg)",
                 "transition": "2s ease all"});
             
     }
         
     function SexAxisRight(){
-         $('#SwitchFour').prop('checked', true);
+        $('#SwitchFour').prop('checked', true);
         $('#SwitchOne').prop('checked', false);
         $('#SwitchFourLED').addClass('led-green-blink');
         $('#SwitchOneLED').removeClass('led-green-blink');
-        $('#axisInput').val(90);
-        $('#axisValue').text(90);
-        $('#DegreeAngel').html(90 + '&deg;');
+        $('#axisInput').val(270);
+        $('#axisValue').text(270);
+        $('#DegreeAngel').html(270 + '&deg;');
         $('#sopbot').css({
-                "transform": "rotate(" + 90 + "deg)", 
+                "transform": "rotate(" + 270 + "deg)",
                 "transition": "2s ease all"});
     }    
     </script>

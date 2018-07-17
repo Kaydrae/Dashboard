@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+</head>
+<body>
+
+<h1>Works</h1>
+
+<input type="checkbox" id="testing">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+$(document).ready(function(){
+var socket = io();
+
+setTimeout(function(){
+
+//socket.emit('data', 'hey');
+
+},3000);
+
+	$('#testing').change(function(){
+
+		if($(this).is(':Checked')){
+			socket.emit('Testing', 'pi');
+		}else{
+			socket.emit('Testing', 'close');
+
+		}
+			
+
+	});
+	
+
+	socket.on('steerMotorSpeed', function(msg){
+          console.log('steerMotorSpeed: ' + msg);
+        
+        });
+	socket.on('releasingBrake', function(msg){
+          console.log('releasingBrake: ' + msg);
+        
+        });
+	socket.on('applyingBrake', function(msg){
+          console.log('applyingBrake: ' + msg);
+        
+        });
+	socket.on('leftHallValue', function(msg){
+          console.log('leftHallValue: ' + msg);
+        
+        });
+	socket.on('rightHallValue', function(msg){
+          console.log('rightHallValue: ' + msg);
+        
+        });
+	socket.on('leftHallCount', function(msg){
+          console.log('leftHallCount: ' + msg);
+        
+        });
+	socket.on('rightHallCount', function(msg){
+          console.log('rightHallCount: ' + msg);
+        
+        });
+	socket.on('leftSteerLimitSwitch', function(msg){
+          console.log('leftSteerLimitSwitch: ' + msg);
+        
+        });
+	socket.on('rightSteerLimitSwitch', function(msg){
+          console.log('rightSteerLimitSwitch: ' + msg);
+        
+        });
+	socket.on('brakeReleaseLimitSwitch', function(msg){
+          console.log('brakeReleaseLimitSwitch: ' + msg);
+        
+        });
+	socket.on('brakeApplyLimitSwitch', function(msg){
+          console.log('brakeApplyLimitSwitch: ' + msg);
+        
+        });
+
+	socket.on('potentiometer', function(msg){
+          console.log('potentiometer: ' + msg);
+        
+        });
+	socket.on('inAutonomous', function(msg){
+          console.log('inAutonomous: ' + msg);
+        
+        });
+});
+
+        
+</script>
+</body>
+</html>
